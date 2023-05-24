@@ -1,0 +1,48 @@
+<launch>
+
+    <arg name="autorun" default="false"/>
+    <!-- HILTI Challenge -->
+  
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site1_handheld_1.bag"/> -->
+    <arg  name="bag_file" default="$(find fast_lio)/data/site1_handheld_2.bag"/>
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site1_handheld_3.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site1_handheld_4.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site1_handheld_5.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site2_handheld_4.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site2_handheld_5.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site2_handheld_6.bag"/> -->
+    <!-- <arg  name="bag_file" default="/media/tmn/mySataSSD2/DATASETS/HILTI2023/site2_robot_1.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site2_robot_2.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site3_handheld_1.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site3_handheld_2.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site3_handheld_3.bag"/> -->
+    <!-- <arg  name="bag_file" default="$(find fast_lio)/data/site3_handheld_4.bag"/> -->
+
+
+ 
+    <arg name="rviz" default="true" />
+
+    <rosparam command="load" file="$(find fast_lio)/config/hesai_velodyne.yaml" />
+
+    <param name="feature_extract_enable" type="bool" value="0"/>
+    <param name="point_filter_num" type="int" value="1"/>
+    <param name="max_iteration" type="int" value="13" />
+    <param name="filter_size_surf" type="double" value="0.1" />
+    <param name="filter_size_map" type="double" value="0.1" />
+    <param name="cube_side_length" type="double" value="1000" />
+    <param name="runtime_pos_log_enable" type="bool" value="0" />
+    <param name="/exp_log_dir" type="string" value="$(find fast_lio)/PCD/" />
+
+
+    <node pkg="fast_lio" type="fastlio_mapping" name="laserMapping" output="screen" /> 
+
+    <group if="$(arg rviz)">
+    <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find fast_lio)/rviz_cfg/loam_livox.rviz" />
+    </group>
+      <node required="$(arg autorun)" pkg="rosbag" type="play" name="rosbag_player"
+          args="$(arg bag_file) -r 0.7 -s 0"
+          launch-prefix="bash -c 'sleep 1; $0 $@' "/>
+
+   
+
+</launch>
